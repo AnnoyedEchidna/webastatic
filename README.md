@@ -1,0 +1,2 @@
+# webastatic
+Static Website Generator
