@@ -9,10 +9,10 @@ class TextType(Enum):
     """
     TextType class extends Enum for types of text used in markup.
     """
-    PLAIN_TEXT = "plain"
-    BOLD_TEXT = "bold"
-    ITALIC_TEXT = "italic"
-    CODE_TEXT = "code"
+    PLAIN = "plain"
+    BOLD = "bold"
+    ITALIC = "italic"
+    CODE = "code"
     LINK = "link"
     IMAGE = "image"
 
