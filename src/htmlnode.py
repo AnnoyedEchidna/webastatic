@@ -23,10 +23,9 @@ class HTMLNode:
 
     def to_html(self):
         """
-        Method to be overwritten by extended classes? 
+        Method to be overwritten by extended classes 
         """
-        raise NotImplementedError(
-            "The 'to_html' method is not yet implemented")
+        raise NotImplementedError("The 'to_html' method is not implemented. Must be used with extended LeafNode class")
 
     def props_to_html(self):
         """
