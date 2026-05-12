@@ -72,20 +72,28 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             new_nodes.append(node)
             continue
 
-        first_node_delimited = 0
-        # check if first character of text is delimiter
-        if node.text[0] == delimiter:
-            first_node_delimited = 1
+        # first_node_delimited = False
+        # # check if first character of text is delimiter
+        # if node.text[0] == delimiter:
+        #     first_node_delimited = True
 
         split_nodes = node.text.split(delimiter)
+        if len(split_nodes) == 1:
+            new_nodes.append(old_node)
+            return new_nodes
+
         # check if split nodes is odd; if even, at least one delimiter did not close
         if len(split_nodes) % 2 == 0:
             raise ValueError("no closing delimiter found")
-    # TODO: FIX THIS LOOP
-        for idx in range(first_node_delimited, len(split_nodes), 2):
-            print(idx)
-            new_nodes.append(TextNode(split_nodes[idx]))
-            new_nodes.append(TextNode(split_nodes[idx+1], text_type))
-            new_nodes.append(TextNode(split_nodes[2]))
+
+        for idx in range(0, len(split_nodes)):
+            if len(split_nodes[idx]) == 0:
+                continue
+            if idx % 2 == 0:
+                new_nodes.append(TextNode(split_nodes[idx]))
+            else:
+                new_nodes.append(TextNode(split_nodes[idx], text_type))
+            
+            
 
     return new_nodes

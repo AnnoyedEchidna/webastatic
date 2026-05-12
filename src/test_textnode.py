@@ -160,6 +160,18 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(one_new_node[0].text_type, TextType.BOLD)
         self.assertEqual(len(one_new_node), 1)
 
+        double_delimiter = TextNode("This text is **bold** but this is **bolder**")
+        double_delim_split = split_nodes_delimiter([double_delimiter], "**", TextType.BOLD)
+        self.assertEqual(double_delim_split[0].text, "This text is ")
+        self.assertEqual(double_delim_split[1].text, "bold")
+        self.assertEqual(double_delim_split[2].text, " but this is ")
+        self.assertEqual(double_delim_split[3].text, "bolder")
+        self.assertEqual(double_delim_split[0].text_type, TextType.PLAIN)
+        self.assertEqual(double_delim_split[1].text_type, TextType.BOLD)
+        self.assertEqual(double_delim_split[2].text_type, TextType.PLAIN)
+        self.assertEqual(double_delim_split[3].text_type, TextType.BOLD)
+        print(double_delim_split)
+
         broken_delimiter = TextNode(
             "There is only one **delimeter for this one")
         with self.assertRaises(ValueError):
