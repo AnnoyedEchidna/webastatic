@@ -1,7 +1,9 @@
 """
 Various functions for manipulating text inputs
 """
+
 import re
+
 from textnode import TextNode, TextType
 
 
@@ -47,5 +49,13 @@ def extract_markdown_images(text):
     """
     Takes a string of text and uses regex to extract the src and alt attributes and returns tuple (src, alt)
     """
-    matches = re.findall(r"!", text)
-    print(matches)
+    matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
+    return matches
+
+
+def extract_markdown_links(text):
+    """
+    Takes a string of text and uses regex to extract the href and link text attributes and returns tuple (href, link)
+    """
+    matches = re.findall(r"(?<!!)\[(.*?)\]\((.*?)\)", text)
+    return matches
