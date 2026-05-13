@@ -6,13 +6,15 @@ val and tag required.
 
 from htmlnode import HTMLNode
 
+
 class LeafNode(HTMLNode):
     """
     Leafnode class. 
     """
+
     def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
-        
+
     def to_html(self):
         """
         returns LeafNode in an HTML format
@@ -21,7 +23,7 @@ class LeafNode(HTMLNode):
             raise ValueError("node must have value")
         if self.tag is None:
             return self.value
-        elif self.props is not None:
+        if self.props is not None:
             html_tag = f"<{self.tag} {self.props_to_html()}>"
             html_end_tag = f"</{self.tag}>"
         else:
