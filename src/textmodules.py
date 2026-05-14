@@ -17,7 +17,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
     for node in old_nodes:
         # Only want to check for delimiters on plain text. If not plain text, skip node and continue
-        if node.text_type is not TextType.PLAIN:
+        if node.text_type is not TextType.TEXT:
             new_nodes.append(node)
             continue
 
@@ -61,13 +61,13 @@ def extract_markdown_links(text):
     return matches
 
 
-# TODO: Fix this mess
 def split_nodes_images(old_nodes):
+    if old_nodes is None or old_nodes == []:
+        raise ValueError("no nodes to split images")
     new_nodes = []
 
     for node in old_nodes:
         # separate node text into text, image tag, text repeat
-        non_image_text = []
         # images info is a list of tuples of images. Will return all images in text
         images_info = extract_markdown_images(node.text)
         # if there are no images in the node, add the node to the new_nodes list as is.
@@ -75,17 +75,45 @@ def split_nodes_images(old_nodes):
             new_nodes.append(node)
             continue
 
+        working_text = node.text  # TEXT
         # TextNode(text, type, url) for image would be TextNode(alt=(img[0]), type.image, src=img[1])
-        # Do we want two lists that come back and we iterate over both? HMMMM
         for image in images_info:
-            img_removed_split = node.text.split(f"![{image[0]}]({image[1]})", 1)
-            print(non_image_text)
-            # print(
-            #     f"{img_removed_split}, len post split: {len(img_removed_split)} len images:{len(images_info)}"
-            # )
-            # new_nodes.append(broken_nodes)
-    pass
+            img_removed = working_text.split(f"![{image[0]}]({image[1]})", 1)
+            if img_removed[0] != "":
+                new_nodes.append(TextNode(img_removed[0], node.text_type))
+            new_nodes.append(TextNode(image[0], "image", image[1]))
+            working_text = img_removed[-1]
+
+        if working_text != "":
+            new_nodes.append(TextNode(working_text, node.text_type))
+
+    return new_nodes
 
 
 def split_nodes_links(old_nodes):
-    pass
+    if old_nodes is None or old_nodes == []:
+        raise ValueError("no nodes to split images")
+    new_nodes = []
+
+    for node in old_nodes:
+        # separate node text into text, image tag, text repeat
+        # images info is a list of tuples of images. Will return all images in text
+        links_info = extract_markdown_links(node.text)
+        # if there are no images in the node, add the node to the new_nodes list as is.
+        if links_info == []:
+            new_nodes.append(node)
+            continue
+
+        working_text = node.text  # TEXT
+        # TextNode(text, type, url) for image would be TextNode(alt=(img[0]), type.image, src=img[1])
+        for link in links_info:
+            link_removed = working_text.split(f"[{link[0]}]({link[1]})", 1)
+            if link_removed[0] != "":
+                new_nodes.append(TextNode(link_removed[0], node.text_type))
+            new_nodes.append(TextNode(link[0], "link", link[1]))
+            working_text = link_removed[-1]
+
+        if working_text != "":
+            new_nodes.append(TextNode(working_text, node.text_type))
+
+    return new_nodes
