@@ -8,6 +8,7 @@ from textmodules import (
     extract_markdown_images,
     extract_markdown_links,
     split_nodes_delimiter,
+    split_nodes_images,
 )
 from textnode import TextNode, TextType
 
@@ -183,6 +184,37 @@ class TestTextNode(unittest.TestCase):
         """
         text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)"
         self.assertEqual(extract_markdown_links(text), [])
+
+    # TEST split_nodes_images method
+    def test_split_nodes_images_no_text(self):
+        """
+        Test the split_nodes_images function passing single node with image and no surround text
+        """
+        text = "![no text img text](src/images/notext.png)"
+        # split_nodes_images([TextNode(text, "plain")])
+
+    def test_split_nodes_images_with_text(self):
+        """
+        Test the split_nodes_images function passing single node with image and surrounding text
+        """
+        text = "This image shown includes things ![single img text](src/images/img1.png) and stuff around the image"
+        # split_nodes_images([TextNode(text, "plain")])
+
+        pass
+
+    def test_split_nodes_images_multi_image(self):
+        """
+        Test the split_nodes_images function passing single node with two images and surrounding text
+        """
+        text = "This image shown includes things ![multi img text](src/images/allthepics.png) and stuff around the image. This also includes ![more picture](src/images/other.png)"
+        split_nodes_images([TextNode(text, "plain")])
+
+        pass
+
+        # TEST NO INPUT
+        # Test more than one TextNode object
+        # test more than one TextNode object with varying properties
+        # test more than one TextNode with links and images
 
 
 if __name__ == "__main__":
