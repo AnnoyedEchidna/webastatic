@@ -10,6 +10,7 @@ from textmodules import (
     split_nodes_delimiter,
     split_nodes_images,
     split_nodes_links,
+    text_to_textnodes,
 )
 from textnode import TextNode, TextType
 
@@ -61,7 +62,7 @@ class TestTextNode(unittest.TestCase):
         """
         Test split_nodes_delimiter method with italic delimiters but bold text_type
         """
-        non_text_text_node = TextNode("This is already _bold_", "bold")
+        non_text_text_node = TextNode("This is already _bold_", TextType.BOLD)
         one_new_node = split_nodes_delimiter([non_text_text_node], "_", TextType.ITALIC)
         self.assertEqual(one_new_node[0].text, "This is already _bold_")
         self.assertEqual(one_new_node[0].text_type, TextType.BOLD)
@@ -96,7 +97,7 @@ class TestTextNode(unittest.TestCase):
         """
         Test split_nodes_delimiter without passing any delimiters in the input string.
         """
-        text_to_text = TextNode("This is entirely text text", "text")
+        text_to_text = TextNode("This is entirely text text", TextType.TEXT)
         text_no_split = split_nodes_delimiter([text_to_text], "**", TextType.BOLD)
         self.assertEqual(text_no_split[0].text, "This is entirely text text")
         self.assertEqual(text_no_split[0].text_type, TextType.TEXT)
@@ -197,7 +198,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_images function passing single node with image and no surround text
         """
         text = "![no text img text](src/images/notext.png)"
-        new_nodes = split_nodes_images([TextNode(text, "text")])
+        new_nodes = split_nodes_images([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "no text img text")
             self.assertEqual(new_nodes[0].text_type, TextType.IMAGE)
@@ -210,7 +211,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_images function passing single node with image and no surround text
         """
         text = "This is just text with no pretty pictures"
-        new_nodes = split_nodes_images([TextNode(text, "text")])
+        new_nodes = split_nodes_images([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(
                 new_nodes[0].text, "This is just text with no pretty pictures"
@@ -224,7 +225,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_images function passing single node with image and surrounding text
         """
         text = "This image shown includes things ![single img text](src/images/img1.png) and stuff around the image"
-        new_nodes = split_nodes_images([TextNode(text, "text")])
+        new_nodes = split_nodes_images([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This image shown includes things ")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -241,7 +242,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_images function passing single node with image and surrounding text
         """
         text = "![single img text](src/images/img1.png) and stuff between the images ![second image](src/image/numbertwo.ico)"
-        new_nodes = split_nodes_images([TextNode(text, "text")])
+        new_nodes = split_nodes_images([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "single img text")
             self.assertEqual(new_nodes[0].text_type, TextType.IMAGE)
@@ -259,7 +260,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_images function passing single node with two images and surrounding text
         """
         text = "This image shown includes things ![multi img text](src/images/allthepics.png) and stuff around the image. This also includes ![more picture](src/images/other.png)"
-        new_nodes = split_nodes_images([TextNode(text, "text")])
+        new_nodes = split_nodes_images([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This image shown includes things ")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -281,7 +282,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_images function passing single node with two images and surrounding text including ending text
         """
         text = "This image shown includes things ![multi img text](src/images/allthepics.png) and stuff around the image. This also includes ![more picture](src/images/other.png) and a closing to the statement"
-        new_nodes = split_nodes_images([TextNode(text, "text")])
+        new_nodes = split_nodes_images([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This image shown includes things ")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -309,9 +310,9 @@ class TestTextNode(unittest.TestCase):
         text3 = "This is just text."
         new_nodes = split_nodes_images(
             [
-                TextNode(text1, "text"),
-                TextNode(text2, "text"),
-                TextNode(text3, "text"),
+                TextNode(text1, TextType.TEXT),
+                TextNode(text2, TextType.TEXT),
+                TextNode(text3, TextType.TEXT),
             ]
         )
         if new_nodes is not None:
@@ -341,9 +342,9 @@ class TestTextNode(unittest.TestCase):
         text3 = "This is just text"
         new_nodes = split_nodes_images(
             [
-                TextNode(text1, "text"),
-                TextNode(text2, "text"),
-                TextNode(text3, "text"),
+                TextNode(text1, TextType.TEXT),
+                TextNode(text2, TextType.TEXT),
+                TextNode(text3, TextType.TEXT),
             ]
         )
         if new_nodes is not None:
@@ -365,9 +366,9 @@ class TestTextNode(unittest.TestCase):
         text3 = "This is just text."
         new_nodes = split_nodes_images(
             [
-                TextNode(text1, "text"),
-                TextNode(text2, "text"),
-                TextNode(text3, "text"),
+                TextNode(text1, TextType.TEXT),
+                TextNode(text2, TextType.TEXT),
+                TextNode(text3, TextType.TEXT),
             ]
         )
         if new_nodes is not None:
@@ -399,7 +400,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_links function passing single node with link and no surround text
         """
         text = "[no text link text](path/to/link/target)"
-        new_nodes = split_nodes_links([TextNode(text, "text")])
+        new_nodes = split_nodes_links([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "no text link text")
             self.assertEqual(new_nodes[0].text_type, TextType.LINK)
@@ -412,7 +413,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_links function passing single node with link and no surround text
         """
         text = "This is just text with no fancy links"
-        new_nodes = split_nodes_links([TextNode(text, "text")])
+        new_nodes = split_nodes_links([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This is just text with no fancy links")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -424,7 +425,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_links function passing single node with link and surrounding text
         """
         text = "This link shown includes things [single link text](src/images/target) and stuff around the link"
-        new_nodes = split_nodes_links([TextNode(text, "text")])
+        new_nodes = split_nodes_links([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This link shown includes things ")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -441,7 +442,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_links function passing single node with image and surrounding text
         """
         text = "[single link text](src/images/target) and stuff between the links [second link](src/image/target2)"
-        new_nodes = split_nodes_links([TextNode(text, "text")])
+        new_nodes = split_nodes_links([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "single link text")
             self.assertEqual(new_nodes[0].text_type, TextType.LINK)
@@ -459,7 +460,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_links function passing single node with two links and surrounding text
         """
         text = "This link shown includes things [multi link text](src/images/allthepics.png) and stuff around the link. This also includes [more link](src/images/other.png)"
-        new_nodes = split_nodes_links([TextNode(text, "text")])
+        new_nodes = split_nodes_links([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This link shown includes things ")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -481,7 +482,7 @@ class TestTextNode(unittest.TestCase):
         Test the split_nodes_links function passing single node with two links and surrounding text including ending text
         """
         text = "This link shown includes things [multi link text](src/images/allthepics.png) and stuff around the link. This also includes [more link](src/images/other.png) and a closing to the statement"
-        new_nodes = split_nodes_links([TextNode(text, "text")])
+        new_nodes = split_nodes_links([TextNode(text, TextType.TEXT)])
         if new_nodes is not None:
             self.assertEqual(new_nodes[0].text, "This link shown includes things ")
             self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
@@ -509,9 +510,9 @@ class TestTextNode(unittest.TestCase):
         text3 = "This is just text."
         new_nodes = split_nodes_links(
             [
-                TextNode(text1, "text"),
-                TextNode(text2, "text"),
-                TextNode(text3, "text"),
+                TextNode(text1, TextType.TEXT),
+                TextNode(text2, TextType.TEXT),
+                TextNode(text3, TextType.TEXT),
             ]
         )
         if new_nodes is not None:
@@ -541,9 +542,9 @@ class TestTextNode(unittest.TestCase):
         text3 = "This is just text"
         new_nodes = split_nodes_links(
             [
-                TextNode(text1, "text"),
-                TextNode(text2, "text"),
-                TextNode(text3, "text"),
+                TextNode(text1, TextType.TEXT),
+                TextNode(text2, TextType.TEXT),
+                TextNode(text3, TextType.TEXT),
             ]
         )
         if new_nodes is not None:
@@ -565,9 +566,9 @@ class TestTextNode(unittest.TestCase):
         text3 = "This is just text."
         new_nodes = split_nodes_links(
             [
-                TextNode(text1, "text"),
-                TextNode(text2, "text"),
-                TextNode(text3, "text"),
+                TextNode(text1, TextType.TEXT),
+                TextNode(text2, TextType.TEXT),
+                TextNode(text3, TextType.TEXT),
             ]
         )
         if new_nodes is not None:
@@ -587,24 +588,125 @@ class TestTextNode(unittest.TestCase):
             with self.assertRaises(IndexError):
                 new_nodes[5]
 
-    def test_split_images(self):
+    def test_split_images_provided_test(self):
         """
         Test for split_nodes_images function provided by lesson
         """
         node = TextNode(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
-            "text",
+            TextType.TEXT,
         )
         new_nodes = split_nodes_images([node])
         self.assertListEqual(
             [
-                TextNode("This is text with an ", "text"),
-                TextNode("image", "image", "https://i.imgur.com/zjjcJKZ.png"),
-                TextNode(" and another ", "text"),
-                TextNode("second image", "image", "https://i.imgur.com/3elNhQu.png"),
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
             ],
             new_nodes,
         )
+
+    # TEST text_to_textnodes function
+    def test_text_to_textnodes(self):
+        """
+        Test text_to_textnodes function passing in given string from lesson.
+        """
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes_list = text_to_textnodes(text)
+        self.assertListEqual(
+            nodes_list,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode(
+                    "obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"
+                ),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+        )
+
+    def test_text_to_textnodes_all_link(self):
+        """
+        Test text_to_textnodes function passing in given string with only links. Including _ delimiter to test file_names.
+        """
+        text = "This is [a link](link/target/path) with [another link](link/other/target)[link three](more_links/link) and [link four](link/four/links)"
+        nodes_list = text_to_textnodes(text)
+        self.assertListEqual(
+            nodes_list,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("a link", TextType.LINK, "link/target/path"),
+                TextNode(" with ", TextType.TEXT),
+                TextNode("another link", TextType.LINK, "link/other/target"),
+                TextNode("link three", TextType.LINK, "more_links/link"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("link four", TextType.LINK, "link/four/links"),
+            ],
+        )
+
+    def test_text_to_textnodes_all_text(self):
+        """
+        Test text_to_textnodes function passing in given string with only links. Including _ delimiter to test file_names.
+        """
+        text = "This is text with just more text and only text the whole way"
+        nodes_list = text_to_textnodes(text)
+        self.assertListEqual(
+            nodes_list,
+            [
+                TextNode(
+                    "This is text with just more text and only text the whole way",
+                    TextType.TEXT,
+                ),
+            ],
+        )
+
+    def test_text_to_textnodes_links_and_images(self):
+        """
+        Test text_to_textnodes function passing given string of a link and images
+        """
+        text = "![image to start](src/starts/image.png)![image to follow](src/followers/follow.png)![just a picture](something/else)[link to everywhere](all/of/the/web)"
+        nodes_list = text_to_textnodes(text)
+        self.assertListEqual(
+            nodes_list,
+            [
+                TextNode("image to start", TextType.IMAGE, "src/starts/image.png"),
+                TextNode("image to follow", TextType.IMAGE, "src/followers/follow.png"),
+                TextNode("just a picture", TextType.IMAGE, "something/else"),
+                TextNode("link to everywhere", TextType.LINK, "all/of/the/web"),
+            ],
+        )
+
+    def test_text_to_textnodes_italic_code_bold(self):
+        """
+        Test text_to_textnodes function with a string of italic, bold, and code text snippets
+        """
+        text = "**this text bolded** _and this is italics_ with just a `space` inbetween some."
+        nodes_list = text_to_textnodes(text)
+        self.assertListEqual(
+            nodes_list,
+            [
+                TextNode("this text bolded", TextType.BOLD),
+                TextNode(" ", TextType.TEXT),
+                TextNode("and this is italics", TextType.ITALIC),
+                TextNode(" with just a ", TextType.TEXT),
+                TextNode("space", TextType.CODE),
+                TextNode(" inbetween some.", TextType.TEXT),
+            ],
+        )
+
+    def test_text_to_textnodes_blank(self):
+        text = ""
+        nodes_list = text_to_textnodes(text)
+        self.assertEqual(nodes_list, [TextNode("", TextType.TEXT)])
 
 
 if __name__ == "__main__":

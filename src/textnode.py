@@ -25,7 +25,7 @@ class TextNode:
     TextNode class for the actual objects containing the text
     """
 
-    def __init__(self, text, text_type="text", url=None):
+    def __init__(self, text, text_type=TextType.TEXT, url=None):
         self.text = text
         self.text_type = TextType(text_type)
         self.url = url

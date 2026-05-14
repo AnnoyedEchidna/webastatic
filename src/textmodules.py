@@ -81,7 +81,7 @@ def split_nodes_images(old_nodes):
             img_removed = working_text.split(f"![{image[0]}]({image[1]})", 1)
             if img_removed[0] != "":
                 new_nodes.append(TextNode(img_removed[0], node.text_type))
-            new_nodes.append(TextNode(image[0], "image", image[1]))
+            new_nodes.append(TextNode(image[0], TextType.IMAGE, image[1]))
             working_text = img_removed[-1]
 
         if working_text != "":
@@ -110,10 +110,25 @@ def split_nodes_links(old_nodes):
             link_removed = working_text.split(f"[{link[0]}]({link[1]})", 1)
             if link_removed[0] != "":
                 new_nodes.append(TextNode(link_removed[0], node.text_type))
-            new_nodes.append(TextNode(link[0], "link", link[1]))
+            new_nodes.append(TextNode(link[0], TextType.LINK, link[1]))
             working_text = link_removed[-1]
 
         if working_text != "":
             new_nodes.append(TextNode(working_text, node.text_type))
 
     return new_nodes
+
+
+def text_to_textnodes(text):
+    """
+    Takes a string and returns a list of text_node objects of corresponding attributes
+    """
+    node = TextNode(text, TextType.TEXT)
+
+    nodes = split_nodes_images([node])
+    nodes = split_nodes_links(nodes)
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+
+    return nodes
