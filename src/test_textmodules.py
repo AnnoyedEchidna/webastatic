@@ -15,7 +15,7 @@ from textmodules import (
 from textnode import TextNode, TextType
 
 
-class TestTextNode(unittest.TestCase):
+class TestTextModule(unittest.TestCase):
     """
     TextModules functions tests
     """
