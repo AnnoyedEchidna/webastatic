@@ -1,7 +1,7 @@
 """
 This is the LeafNode class. This extends HTMLNode
 does not allow for children
-val and tag required. 
+val and tag required.
 """
 
 from htmlnode import HTMLNode
@@ -9,7 +9,7 @@ from htmlnode import HTMLNode
 
 class LeafNode(HTMLNode):
     """
-    Leafnode class. 
+    Leafnode class. Child of HTMLNode class, but does not allow for children
     """
 
     def __init__(self, tag, value, props=None):

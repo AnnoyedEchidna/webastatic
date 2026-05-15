@@ -124,7 +124,6 @@ def text_to_textnodes(text):
     Takes a string and returns a list of text_node objects of corresponding attributes
     """
     node = TextNode(text, TextType.TEXT)
-
     nodes = split_nodes_images([node])
     nodes = split_nodes_links(nodes)
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)

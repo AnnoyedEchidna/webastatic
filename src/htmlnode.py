@@ -1,11 +1,11 @@
 """
-HTML Class for nodes to create HTML tags 
+HTML Class for nodes to create HTML tags
 """
 
 
 class HTMLNode:
     """
-    Class of HTMLNodes. 
+    Class of HTMLNodes. Parent class to LeafNode and ParentNode.
     """
 
     def __init__(self, tag=None, value=None, children=None, props=None):
@@ -23,20 +23,21 @@ class HTMLNode:
 
     def to_html(self):
         """
-        Method to be overwritten by extended classes 
+        Method to be overwritten by extended classes
         """
         raise NotImplementedError(
-            "The 'to_html' method is not implemented. Must be used with extended classes")
+            "The 'to_html' method is not implemented. Must be used with extended classes"
+        )
 
     def props_to_html(self):
         """
-        format HTMLNode.props into standard string. 
+        format HTMLNode.props into standard string.
         """
         formatted_props = ""
         if self.props is None or self.props == {}:
             return ""
         for key, value in self.props.items():
-            formatted_props += f"{key}=\"{value}\" "
+            formatted_props += f'{key}="{value}" '
 
         return formatted_props[:-1]
 

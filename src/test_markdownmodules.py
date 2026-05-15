@@ -4,7 +4,12 @@ Tests for markdown modules
 
 import unittest
 
-from markdownmodules import BlockType, block_to_block_type, markdown_to_blocks
+from markdownmodules import (
+    BlockType,
+    block_to_block_type,
+    markdown_to_blocks,
+    markdown_to_html_node,
+)
 
 
 class TestMarkdownModules(unittest.TestCase):
@@ -128,7 +133,7 @@ class TestMarkdownModules(unittest.TestCase):
         """
         Test block_to_block_type passing ordered list
         """
-        block = """1. Ordered list here!"""
+        block = """1. Ordered list here!\n2. Second ordered list item\n3. Third ordered list item"""
         self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
 
     def test_block_to_block_type_improper_o_l(self):
@@ -144,6 +149,49 @@ class TestMarkdownModules(unittest.TestCase):
         """
         block = """ ## Bad heading"""
         self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    # TEST markdown_to_html function
+    def test_markdown_to_html_node_heading(self):
+        """
+        Test markdown_to_html_node function passing a heading to verify the heading number output
+        """
+        md = "# Heading block"
+        markdown_to_html_node(md)
+
+    def test_markdown_to_html_node_blockquote(self):
+        """
+        Test markdown_to_html_node function passing a blockquote without a leading space
+        """
+        md = ">blockquote block without space"
+        markdown_to_html_node(md)
+
+    def test_markdown_to_html_node_blockquote_space(self):
+        """
+        Test markdown_to_html_node function passing a block quote with a leading space
+        """
+        md = "> blockquote block with space"
+        markdown_to_html_node(md)
+
+    def test_markdown_to_html_node_paragraph(self):
+        """
+        Test markdown_to_html_node function passing a paragraph with no formatting
+        """
+        md = "paragraph with no other formatting"
+        # markdown_to_html_node(md)
+
+    def test_markdown_to_html_node_paragraph_formatting(self):
+        """
+        Test markdown_to_html_node function passing a paragraph with in-line formatting
+        """
+        md = "paragraph with **bold** and _italic_ formatting"
+        # markdown_to_html_node(md)
+
+    def test_markdown_to_html_node_unordered_list(self):
+        """
+        Test markdown_to_html_node function passing an unorderd list
+        """
+        md = "- Unordered list item 1\n- UL list item 2\n- UL list 3"
+        markdown_to_html_node(md)
 
 
 if __name__ == "__main__":

@@ -4,13 +4,14 @@ This is the ParentNode class. This class will handle nesting HTML nodes inside o
 
 from htmlnode import HTMLNode
 
+
 class ParentNode(HTMLNode):
     """
-    This is the ParentNode class.
+    This is the ParentNode class. Childnode of HTMLClass but does not allow for a value
     """
+
     def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
-
 
     def to_html(self):
         if self.tag is None:
