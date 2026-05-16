@@ -4,11 +4,9 @@ Series of functions to handle markdown formatting for HTML conversion
 
 from enum import Enum
 
-from htmlnode import HTMLNode
-from leafnode import LeafNode
 from parentnode import ParentNode
 from textmodules import text_to_textnodes
-from textnode import text_node_to_html_node
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class BlockType(Enum):
@@ -47,7 +45,7 @@ def block_to_block_type(block):
             else:
                 return BlockType.PARAGRAPH
         case "`":
-            if block[1:4] == "``\n" and block.endswith("```"):
+            if block[1:4] == "``\n" and block.endswith("\n```"):
                 return BlockType.CODE
             else:
                 return BlockType.PARAGRAPH
@@ -77,6 +75,7 @@ def text_to_children(text):
 
 def markdown_to_html_node(markdown):
     markdown_blocks = markdown_to_blocks(markdown)
+    html_nodes = []
     for md_block in markdown_blocks:
         block_type = block_to_block_type(md_block)
         match block_type:
@@ -87,22 +86,32 @@ def markdown_to_html_node(markdown):
                 )
             case BlockType.QUOTE:
                 if md_block[1] == " ":
-                    html_node = ParentNode("blockquote", text_to_children(md_block[2:]))
+                    html_node = ParentNode(
+                        "blockquote", text_to_children(md_block[2:].replace("\n", " "))
+                    )
                 else:
-                    html_node = ParentNode("blockquote", text_to_children(md_block[1:]))
+                    html_node = ParentNode(
+                        "blockquote", text_to_children(md_block[1:].replace("\n", " "))
+                    )
             case BlockType.UNORDERED_LIST:
                 list_items = md_block.split("\n")
-                list_html_nodes = []
+                li_parent_nodes = []
                 for item in list_items:
-                    list_html_nodes.extend(text_to_children(item))
-                html_node = ParentNode("ul", list_html_nodes)
+                    li_parent_nodes.append(ParentNode("li", text_to_children(item[2:])))
+                html_node = ParentNode("ul", li_parent_nodes)
             case BlockType.ORDERED_LIST:
                 list_items = md_block.split("\n")
-                list_html_nodes = []
+                li_parent_nodes = []
                 for item in list_items:
-                    list_html_nodes.append(LeafNode("li", item))
-                html_node = LeafNode("ol", [list_html_nodes])
+                    li_parent_nodes.append(ParentNode("li", text_to_children(item[3:])))
+                html_node = ParentNode("ol", li_parent_nodes)
             case BlockType.PARAGRAPH:
-                html_node = LeafNode("p", md_block)
+                html_node = ParentNode(
+                    "p", text_to_children(md_block.replace("\n", " "))
+                )
+            case BlockType.CODE:
+                code_node = TextNode(md_block.replace("```", "")[1:], TextType.CODE)
+                html_node = ParentNode("pre", [text_node_to_html_node(code_node)])
 
-    print(html_node.to_html())
+        html_nodes.append(html_node)
+    return ParentNode("div", html_nodes)

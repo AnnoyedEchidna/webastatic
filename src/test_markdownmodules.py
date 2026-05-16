@@ -91,14 +91,14 @@ class TestMarkdownModules(unittest.TestCase):
         """
         Test block_to_block_type passing code block
         """
-        block = """```\nThis is supposed to be code```"""
+        block = """```\nThis is supposed to be code\n```"""
         self.assertEqual(block_to_block_type(block), BlockType.CODE)
 
     def test_block_to_block_type_improper_start_code(self):
         """
         Test block_to_block_type passing code block improperly formatted
         """
-        block = """```This is supposed to be code```"""
+        block = """```This is supposed to be code\n```"""
         self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
     def test_block_to_block_type_improper_end_code(self):
@@ -156,42 +156,113 @@ class TestMarkdownModules(unittest.TestCase):
         Test markdown_to_html_node function passing a heading to verify the heading number output
         """
         md = "# Heading block"
-        markdown_to_html_node(md)
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(html, "<div><h1>Heading block</h1></div>")
 
     def test_markdown_to_html_node_blockquote(self):
         """
         Test markdown_to_html_node function passing a blockquote without a leading space
         """
         md = ">blockquote block without space"
-        markdown_to_html_node(md)
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(
+            html, "<div><blockquote>blockquote block without space</blockquote></div>"
+        )
 
     def test_markdown_to_html_node_blockquote_space(self):
         """
         Test markdown_to_html_node function passing a block quote with a leading space
         """
         md = "> blockquote block with space"
-        markdown_to_html_node(md)
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(
+            html, "<div><blockquote>blockquote block with space</blockquote></div>"
+        )
 
     def test_markdown_to_html_node_paragraph(self):
         """
         Test markdown_to_html_node function passing a paragraph with no formatting
         """
         md = "paragraph with no other formatting"
-        # markdown_to_html_node(md)
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(html, "<div><p>paragraph with no other formatting</p></div>")
 
     def test_markdown_to_html_node_paragraph_formatting(self):
         """
         Test markdown_to_html_node function passing a paragraph with in-line formatting
         """
         md = "paragraph with **bold** and _italic_ formatting"
-        # markdown_to_html_node(md)
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(
+            html,
+            "<div><p>paragraph with <b>bold</b> and <i>italic</i> formatting</p></div>",
+        )
 
     def test_markdown_to_html_node_unordered_list(self):
         """
         Test markdown_to_html_node function passing an unorderd list
         """
         md = "- Unordered list item 1\n- UL list item 2\n- UL list 3"
-        markdown_to_html_node(md)
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>Unordered list item 1</li><li>UL list item 2</li><li>UL list 3</li></ul></div>",
+        )
+
+    def test_markdown_to_html_node_ordered_list(self):
+        """
+        Test markdown_to_html_node function passing an orderd list
+        """
+        md = "1. Ordered list item 1\n2. OL list item 2\n3. OL list 3"
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(
+            html,
+            "<div><ol><li>Ordered list item 1</li><li>OL list item 2</li><li>OL list 3</li></ol></div>",
+        )
+
+    def test_markdown_to_html_node_code(self):
+        """
+        Test markdown_to_html_node passing a code block
+
+        """
+        md = """```\nThis is supposed to be code\nwith some lines\ninbetween the ends\n```"""
+        html = markdown_to_html_node(md).to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is supposed to be code\nwith some lines\ninbetween the ends\n</code></pre></div>",
+        )
+
+    def test_paragraphs(self):
+        md = """
+    This is **bolded** paragraph
+    text in a p
+    tag here
+
+    This is another paragraph with _italic_ text and `code` here
+
+    """
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+        )
+
+    def test_codeblock(self):
+        md = """
+    ```
+    This is text that _should_ remain
+    the **same** even with inline stuff
+    ```
+    """
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
 
 
 if __name__ == "__main__":
