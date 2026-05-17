@@ -50,6 +50,9 @@ def block_to_block_type(block):
             else:
                 return BlockType.PARAGRAPH
         case ">":
+            for quote_line in block.split("\n"):
+                if quote_line[0] != ">":
+                    return BlockType.PARAGRAPH
             return BlockType.QUOTE
         case "-":
             if block[1] == " ":
@@ -66,6 +69,11 @@ def block_to_block_type(block):
 
 
 def text_to_children(text):
+    """
+        Helper function for markdown_to_html_nodes. Takes a markdown text, converts into TextNodes,
+    and then returns a list of HTMLNodes from text_node_to_html_node to be passed as children nodes
+    to a calling ParentNode
+    """
     text_nodes = text_to_textnodes(text)
     children = []
     for text_node in text_nodes:
@@ -73,7 +81,27 @@ def text_to_children(text):
     return children
 
 
+def extract_title(markdown):
+    """
+    Takes markdown and returns the content of the first h1 or # block from the markdown
+    as an unformatted string
+    """
+
+    if markdown is None:
+        raise ValueError("Empty strings do not have a title")
+    markdown_blocks = markdown_to_blocks(markdown)
+    for block in markdown_blocks:
+        if block_to_block_type(block) == BlockType.HEADING:
+            heading_num = block[0:6].count("#")
+            if heading_num == 1:
+                return block[heading_num + 1 :]
+    raise Exception("No heading found for this markdown")
+
+
 def markdown_to_html_node(markdown):
+    """
+    Takes a markdown document and converts into an html document
+    """
     markdown_blocks = markdown_to_blocks(markdown)
     html_nodes = []
     for md_block in markdown_blocks:

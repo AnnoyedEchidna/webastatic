@@ -29,6 +29,8 @@ class LeafNode(HTMLNode):
         else:
             html_tag = f"<{self.tag}>"
             html_end_tag = f"</{self.tag}>"
+        if self.tag == "img":
+            return f"{html_tag}{self.value}"
         return f"{html_tag}{self.value}{html_end_tag}"
 
     def __repr__(self):

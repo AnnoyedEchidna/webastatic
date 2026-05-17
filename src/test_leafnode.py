@@ -1,9 +1,8 @@
 """
-Unit tests for LeafNode class tests for to_html method.  
+Unit tests for LeafNode class tests for to_html method.
 """
 
 import unittest
-
 
 from leafnode import LeafNode
 
@@ -33,12 +32,12 @@ class TestLeafNode(unittest.TestCase):
     # TEST LeafNode.to_html() method
     def test_to_html(self):
         """
-        Test to_html method with a link and one prop 
+        Test to_html method with a link and one prop
         """
-        node = LeafNode("a", "This is a link", {
-                        "href": "https://localhost:8888"})
+        node = LeafNode("a", "This is a link", {"href": "https://localhost:8888"})
         self.assertEqual(
-            node.to_html(), "<a href=\"https://localhost:8888\">This is a link</a>")
+            node.to_html(), '<a href="https://localhost:8888">This is a link</a>'
+        )
 
     def test_to_html_p(self):
         """
@@ -59,9 +58,12 @@ class TestLeafNode(unittest.TestCase):
         Test to_html with imgage tag two props
         """
         node3 = LeafNode(
-            "img", "", {"src": "src/images/favicon.ico", "alt": "This is img alt text"})
-        self.assertEqual(node3.to_html(
-        ), "<img src=\"src/images/favicon.ico\" alt=\"This is img alt text\"></img>")
+            "img", "", {"src": "src/images/favicon.ico", "alt": "This is img alt text"}
+        )
+        self.assertEqual(
+            node3.to_html(),
+            '<img src="src/images/favicon.ico" alt="This is img alt text">',
+        )
 
     def test_to_html_no_tag(self):
         """

@@ -7,6 +7,7 @@ import unittest
 from markdownmodules import (
     BlockType,
     block_to_block_type,
+    extract_title,
     markdown_to_blocks,
     markdown_to_html_node,
 )
@@ -263,6 +264,67 @@ class TestMarkdownModules(unittest.TestCase):
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_extract_title_single(self):
+        """
+        Test the extract_title function by passing a multi-header markdown
+        """
+        title = extract_title("# There is the heading!")
+        self.assertEqual(title, "There is the heading!")
+
+    def test_extract_title_multi(self):
+        """
+        Test the extract_title function by passing a multi-header markdown
+        """
+        title = extract_title(
+            "## This is not the heading!\n\n### This is also not the heading!\n\n# There is the heading!\n\n#### Look at this heading\n\n# The hidden other heading"
+        )
+        self.assertEqual(title, "There is the heading!")
+
+    def test_extract_title_first(self):
+        """
+        Test the extract_title function by passing a multi-header markdown starting with h1
+        """
+        title = extract_title(
+            "# This is defo the heading!\n\n### This is also not the heading!\n\n# There is the heading!\n\n#### Look at this heading\n\n# The hidden other heading"
+        )
+        self.assertEqual(title, "This is defo the heading!")
+
+    def test_extract_title_other_md(self):
+        """
+        Test the extract_title function by passing a heading with other markdown
+        """
+        title = extract_title("""
+# Title of the page
+
+This is just the beginning of the **page** where we _live._
+It could be much worse like it is [here](link/to/somewhere)
+            """)
+        self.assertEqual(title, "Title of the page")
+
+    def test_extract_title_no_title(self):
+        """
+        Test the extract_title function by passing a markdown with no heading
+        """
+        with self.assertRaises(Exception):
+            extract_title("""
+    This is just the beginning of the **page** where we _live._
+    It could be much worse like it is [here](link/to/somewhere)
+                """)
+
+    def test_extract_title_no_markdown(self):
+        """
+        Test the extract_title function by passing a no markdown
+        """
+        with self.assertRaises(Exception):
+            extract_title("")
+
+    def test_extract_title_pass_none(self):
+        """
+        Test the extract_title function by passing a no markdown
+        """
+        with self.assertRaises(ValueError):
+            extract_title(None)
 
 
 if __name__ == "__main__":
