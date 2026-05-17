@@ -5,7 +5,7 @@ Main! You should know what main is.
 import os
 import shutil
 
-from markdownmodules import extract_title, markdown_to_html_node
+from page_modules import copy_directory, generate_page
 
 
 def main():
@@ -15,52 +15,24 @@ def main():
     copy_directory("static", "public")
 
     generate_page("content/index.md", "template.html", "public/index.html")
-
-
-def generate_page(from_path, template_path, to_path):
-    """
-    Takes a path of .md file to generate page content,
-    the template file of the .html,
-    and the path to where to save the new .html file
-    then saves the new HTML file to that path.
-    """
-    print(f"Generating page from {from_path} to {to_path} using {template_path}")
-
-    with open(from_path, "r") as f:
-        markdown = f.read()
-    with open(template_path, "r") as t:
-        html = t.read()
-
-    index_html = html.replace(
-        "{{ Content }}", markdown_to_html_node(markdown).to_html()
-    ).replace("{{ Title }}", extract_title(markdown))
-
-    if not os.path.exists(to_path.split("/")[0]):
-        os.mkdir(to_path)
-    with open(to_path, "w") as i:
-        i.write(index_html)
-
-
-def copy_directory(src_path, to_path):
-    if os.path.isdir(src_path):
-        if not os.path.exists(to_path):
-            os.mkdir(to_path)
-        paths = os.listdir(src_path)
-        for r_path in paths:
-            joined_path = os.path.join(src_path, r_path)
-            path_root = src_path.split("/")[0]
-            dest_path = joined_path.replace(path_root, to_path)
-            if os.path.isdir(joined_path):
-                print(f"creating {dest_path}")
-                if not os.path.exists(dest_path):
-                    os.mkdir(dest_path)
-                copy_directory(joined_path, to_path)
-            elif os.path.isfile(joined_path):
-                print(f"copying {joined_path} to {dest_path}")
-                shutil.copy(joined_path, dest_path)
-
-        return
-    print(f"{src_path} is not a directory")
+    generate_page(
+        "content/blog/glorfindel/index.md",
+        "template.html",
+        "public/blog/glorfindel/index.html",
+    )
+    generate_page(
+        "content/blog/majesty/index.md",
+        "template.html",
+        "public/blog/majesty/index.html",
+    )
+    generate_page(
+        "content/blog/tom/index.md", "template.html", "public/blog/tom/index.html"
+    )
+    generate_page(
+        "content/blog/contact/index.md",
+        "template.html",
+        "public/blog/contact/index.html",
+    )
 
 
 def test():
