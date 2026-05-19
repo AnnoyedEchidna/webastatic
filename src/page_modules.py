@@ -36,12 +36,6 @@ def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
 
 
 def generate_page(from_path, template_path, to_path):
-    """
-    Takes a path of .md file to generate page content,
-    the template file of the .html,
-    and the path to where to save the new .html file
-    then saves the new HTML file to that path.
-    """
     print("=================================")
     print(f"Generating page from {from_path} to {to_path} using {template_path}")
 
