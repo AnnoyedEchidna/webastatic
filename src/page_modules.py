@@ -8,6 +8,33 @@ import shutil
 from markdownmodules import extract_title, markdown_to_html_node
 
 
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
+    for inner_path in os.listdir(dir_path_content):
+        content_path = os.path.join(dir_path_content, inner_path)
+        print(f"inner path: {content_path}")
+        if os.path.isdir(content_path):
+            deeper_dest_path = os.path.join(dest_dir_path, inner_path)
+            if not os.path.exists(deeper_dest_path):
+                print(f"making dir: {deeper_dest_path}")
+                os.mkdir(deeper_dest_path)
+            generate_page_recursive(content_path, template_path, deeper_dest_path)
+        elif os.path.isfile(content_path):
+            if content_path[-3:] == ".md":
+                print(f"is file: {content_path}")
+                with open(content_path, "r") as f:
+                    markdown = f.read()
+                with open(template_path, "r") as t:
+                    html = t.read()
+
+                index_html = html.replace(
+                    "{{ Content }}", markdown_to_html_node(markdown).to_html()
+                ).replace("{{ Title }}", extract_title(markdown))
+
+                print(f"writing file: {dest_dir_path + 'index.html'}")
+                with open(dest_dir_path + "/index.html", "w") as i:
+                    i.write(index_html)
+
+
 def generate_page(from_path, template_path, to_path):
     """
     Takes a path of .md file to generate page content,

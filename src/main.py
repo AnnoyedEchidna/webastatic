@@ -5,7 +5,7 @@ Main! You should know what main is.
 import os
 import shutil
 
-from page_modules import copy_directory, generate_page
+from page_modules import copy_directory, generate_page, generate_page_recursive
 
 
 def main():
@@ -14,25 +14,28 @@ def main():
         shutil.rmtree("public")
     copy_directory("static", "public")
 
-    generate_page("content/index.md", "template.html", "public/index.html")
-    generate_page(
-        "content/blog/glorfindel/index.md",
-        "template.html",
-        "public/blog/glorfindel/index.html",
-    )
-    generate_page(
-        "content/blog/majesty/index.md",
-        "template.html",
-        "public/blog/majesty/index.html",
-    )
-    generate_page(
-        "content/blog/tom/index.md", "template.html", "public/blog/tom/index.html"
-    )
-    generate_page(
-        "content/blog/contact/index.md",
-        "template.html",
-        "public/blog/contact/index.html",
-    )
+    generate_page_recursive("content", "template.html", "public")
+
+    #
+    # generate_page("content/index.md", "template.html", "public/index.html")
+    # generate_page(
+    #     "content/blog/glorfindel/index.md",
+    #     "template.html",
+    #     "public/blog/glorfindel/index.html",
+    # )
+    # generate_page(
+    #     "content/blog/majesty/index.md",
+    #     "template.html",
+    #     "public/blog/majesty/index.html",
+    # )
+    # generate_page(
+    #     "content/blog/tom/index.md", "template.html", "public/blog/tom/index.html"
+    # )
+    # generate_page(
+    #     "content/contact/index.md",
+    #     "template.html",
+    #     "public/contact/index.html",
+    # )
 
 
 def test():
