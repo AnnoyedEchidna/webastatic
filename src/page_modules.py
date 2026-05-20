@@ -8,7 +8,7 @@ import shutil
 from markdownmodules import extract_title, markdown_to_html_node
 
 
-def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for inner_path in os.listdir(dir_path_content):
         content_path = os.path.join(dir_path_content, inner_path)
         print(f"inner path: {content_path}")
@@ -17,20 +17,31 @@ def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
             if not os.path.exists(deeper_dest_path):
                 print(f"making dir: {deeper_dest_path}")
                 os.mkdir(deeper_dest_path)
-            generate_page_recursive(content_path, template_path, deeper_dest_path)
+            generate_page_recursive(
+                content_path, template_path, deeper_dest_path, basepath
+            )
         elif os.path.isfile(content_path):
             if content_path[-3:] == ".md":
+                print("=================================")
+                print(
+                    f"Generating page from {dir_path_content} to {dest_dir_path} using {template_path}"
+                )
                 print(f"is file: {content_path}")
                 with open(content_path, "r") as f:
                     markdown = f.read()
                 with open(template_path, "r") as t:
                     html = t.read()
 
-                index_html = html.replace(
-                    "{{ Content }}", markdown_to_html_node(markdown).to_html()
-                ).replace("{{ Title }}", extract_title(markdown))
+                index_html = (
+                    html.replace(
+                        "{{ Content }}", markdown_to_html_node(markdown).to_html()
+                    )
+                    .replace("{{ Title }}", extract_title(markdown))
+                    .replace('href="/', f'href="{basepath}')
+                    .replace('src="/', f'src="{basepath}')
+                )
 
-                print(f"writing file: {dest_dir_path + 'index.html'}")
+                print(f"writing file: {dest_dir_path + '/index.html'}")
                 with open(dest_dir_path + "/index.html", "w") as i:
                     i.write(index_html)
 
